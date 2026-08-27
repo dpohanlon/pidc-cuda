@@ -1,0 +1,48 @@
+[build-system]
+requires = [
+    "scikit-build-core>=0.11",
+    "pybind11>=2.13",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pidc-cuda"
+version = "0.1.0"
+description = "Fast CPU and CUDA PIDC gene-regulatory-network inference"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "pidc-cuda contributors"}]
+dependencies = ["numpy>=1.23"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+build = ["build>=1.2", "auditwheel>=6"]
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+cmake.build-type = "Release"
+wheel.packages = ["src/pidc_cuda"]
+sdist.include = ["cpp/**", "tests/*.py", "CMakeLists.txt", "LICENSE"]
+sdist.exclude = ["**/__pycache__/**", "**/*.py[cod]"]
+build-dir = "build/{wheel_tag}"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.cibuildwheel]
+build = "cp310-manylinux_x86_64 cp311-manylinux_x86_64 cp312-manylinux_x86_64 cp313-manylinux_x86_64 cp314-manylinux_x86_64"
+skip = "*-musllinux*"
+test-command = "python -c \"import pidc_cuda; assert isinstance(pidc_cuda.cuda_available(), bool)\""
+
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "quay.io/manylinux_cuda/manylinux_2_28_x86_64_cuda13_1:latest"
+before-all = "dnf install -y boost-devel eigen3-devel"

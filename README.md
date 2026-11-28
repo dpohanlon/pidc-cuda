@@ -75,6 +75,12 @@ triplet loop. For a small reference calculation, pass
 `triplet_reference=True` to `pidc_cpu`; this is much slower and is intended
 only for validation.
 
+## Performance
+
+On one million cells, PIDC ran roughly 2–5× as fast on the GPU as on 12 CPU cores, depending on gene count.
+
+![PIDC wall time versus gene count on CPU and GPU](assets/runtime_by_genes_1m_cells_pidc.png)
+
 ## Test
 
 ```bash
